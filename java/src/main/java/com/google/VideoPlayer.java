@@ -149,9 +149,24 @@ public void pauseVideo() {
   }
 
   public void addVideoToPlaylist(String playlistName, String videoId) {
-	  if(allPlaylists.stream().anyMatch(playlistName :: equalsIgnoreCase) && videos.stream().anyMatch(video -> video.getVideoId().equals(videoId))){
-	      System.out.println("Added video to my_playlist: " ) ;
-	    }
+	  if(!playlists.containsKey(playlistName.toUpperCase()) ){
+      System.out.println("Cannot add video to "+ playlistName+": Playlist does not exist");
+    }
+    else{
+      if(videoLibrary.getVideo(videoId)==null ){
+        System.out.println("Cannot add video to "+playlistName+": Video does not exist");
+      }
+      else if(videoLibrary.getVideo(videoId).isFlagged()){
+        System.out.println("Cannot add video to "+playlistName+": "+showFlaggedReason(videoLibrary.getVideo(videoId)));
+      }
+      else if(playlists.get(playlistName.toUpperCase()).getVideos()!=null && playlists.get(playlistName.toUpperCase()).getVideos().contains(videoLibrary.getVideo(videoId))){
+        System.out.println("Cannot add video to "+playlistName+": Video already added");
+      }
+      else{
+        System.out.println("Added video to "+playlistName+": "+videoLibrary.getVideo(videoId).getTitle());
+        playlists.get(playlistName.toUpperCase()).addVideo((videoLibrary.getVideo(videoId)));
+      }
+    }
   }
 
   public void showAllPlaylists() {
